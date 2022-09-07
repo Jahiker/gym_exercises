@@ -29,14 +29,15 @@ const SearchExercises = ({
         "https://exercisedb.p.rapidapi.com/exercises",
         exercisesOptions
       );
+
       console.log(exercisesData);
 
       const searchedExercises = exercisesData.filter(
         (exercise) =>
-          exercise.name.toLocaleLowerCase().icludes(search) ||
-          exercise.target.toLocaleLowerCase().icludes(search) ||
-          exercise.equipment.toLocaleLowerCase().icludes(search) ||
-          exercise.bodyPart.toLocaleLowerCase().icludes(search)
+          exercise.name.toLowerCase().includes(search) ||
+          exercise.target.toLowerCase().includes(search) ||
+          exercise.equipment.toLowerCase().includes(search) ||
+          exercise.bodyPart.toLowerCase().includes(search)
       );
 
       setSearch('');
