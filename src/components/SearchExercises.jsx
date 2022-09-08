@@ -30,7 +30,7 @@ const SearchExercises = ({
         exercisesOptions
       );
 
-      console.log(exercisesData);
+      // console.log(exercisesData);
 
       const searchedExercises = exercisesData.filter(
         (exercise) =>

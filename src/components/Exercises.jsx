@@ -5,7 +5,7 @@ import { Box, Stack, Typography } from "@mui/material";
 
 import ExerciseCard from "./ExerciseCard";
 
-import { exerciseOptions, fetchData } from "../utils/fetchData";
+import { exercisesOptions, fetchData } from "../utils/fetchData";
 
 const Exercises = ({ exercises, setExercises, bodyPart }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,6 +21,24 @@ const Exercises = ({ exercises, setExercises, bodyPart }) => {
     setCurrentPage(value);
     window.scrollTo({top: 1800, behavior: 'smooth'})
   }
+
+  useEffect(() => {
+    const fetchExercisesData = async () => {
+      let exerciseData = [];
+
+      if (bodyPart === 'all') {
+        exerciseData = await fetchData("https://exercisedb.p.rapidapi.com/exercises", exercisesOptions);
+      } else {
+        exerciseData = await fetchData(`https://exercisedb.p.rapidapi.com/exercises/bodyPart/${bodyPart}`, exercisesOptions);
+      }
+
+      setExercises(exerciseData);
+
+    }
+
+    fetchExercisesData();
+    
+  }, [bodyPart])
 
   return (
     <Box
