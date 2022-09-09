@@ -6,6 +6,7 @@ import { Box } from '@mui/material'
 import Detail from '../components/Detail';
 import ExerciseVideos from '../components/ExerciseVideos';
 import SimilarExercises from '../components/SimilarExercises';
+import Loader from '../components/Loader';
 
 import { exercisesOptions, youtubeOptions, fetchData } from "../utils/fetchData";
 
@@ -14,6 +15,7 @@ const ExerciseDetail = () => {
   const [exerciseVideo, setExerciseVideo] = useState([]);
   const [targetMuscleExercises, setTargetMuscleExercises] = useState([]);
   const [equipmentExercises, setEquipmentExercises] = useState([])
+  const [loading, setLoading] = useState(true);
   const { id } = useParams();
 
   useEffect(() => {
@@ -23,16 +25,21 @@ const ExerciseDetail = () => {
       const youtubeSearchUrl = 'https://youtube-search-and-download.p.rapidapi.com';
 
       const exerciseDeatilData = await fetchData(`${exerciseDbUrl}/exercises/exercise/${id}`, exercisesOptions);
-      setExerciseDetail(exerciseDeatilData);
+      
+      if(exerciseDeatilData && exerciseDeatilData !== {}) {
+        setExerciseDetail(exerciseDeatilData);
 
-      const exerciseVideoData = await fetchData(`${youtubeSearchUrl}/search?query=${exerciseDetail.name}`, youtubeOptions);
-      setExerciseVideo(exerciseVideoData.contents);
+        const exerciseVideoData = await fetchData(`${youtubeSearchUrl}/search?query=${exerciseDetail.name}`, youtubeOptions);
+        setExerciseVideo(exerciseVideoData.contents);
+  
+        const muscleExerciseData = await fetchData(`${exerciseDbUrl}/exercises/target/${exerciseDeatilData.target}`, exercisesOptions);
+        setTargetMuscleExercises(muscleExerciseData)
+  
+        const equipmentExerciseData = await fetchData(`${exerciseDbUrl}/exercises/equipment/${exerciseDeatilData.equipment}`, exercisesOptions);
+        setEquipmentExercises(equipmentExerciseData);
 
-      const muscleExerciseData = await fetchData(`${exerciseDbUrl}/exercises/target/${exerciseDeatilData.target}`, exercisesOptions);
-      setTargetMuscleExercises(muscleExerciseData)
-
-      const equipmentExerciseData = await fetchData(`${exerciseDbUrl}/exercises/equipment/${exerciseDeatilData.equipment}`, exercisesOptions);
-      setEquipmentExercises(equipmentExerciseData);
+        setLoading(false);
+      }
 
     }
 
@@ -42,7 +49,7 @@ const ExerciseDetail = () => {
   return (
     <Box>
       <Detail exerciseDetail={exerciseDetail} />
-      <ExerciseVideos exerciseVideo={exerciseVideo} name={exerciseDetail.name} />
+      { !loading ? <ExerciseVideos exerciseVideo={exerciseVideo} name={exerciseDetail.name} /> : <Loader /> }
       <SimilarExercises targetMuscleExercises={targetMuscleExercises} equipmentExercises={equipmentExercises} />
     </Box>
   )
